@@ -1,0 +1,15 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa; /* Bootstrap Light Background */
+  margin: 0;
+  padding: 0;
+}
+
+/*Home page*/
+
+.narrow-btn {
+  width: 120px; /* Adjust width as needed */
+  padding: 5px 10px;
+}
+
+
