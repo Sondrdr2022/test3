@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 export default function FreelancerDashboard() {
   const [userData, setUserData] = useState(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -17,7 +18,7 @@ export default function FreelancerDashboard() {
 
       const { data, error } = await supabase
         .from("users")
-        .select("id, first_name, last_name, job, email, country, mobile, description") 
+        .select("*") 
         .eq("id", id)
         .single();
 
@@ -26,25 +27,34 @@ export default function FreelancerDashboard() {
         navigate("/");
       } else {
         setUserData(data);
+
+        // Check if there is an existing image URL in local storage
+        const existingImageUrl = localStorage.getItem('uploadedImageUrl');
+        if (existingImageUrl) {
+          setUploadedImageUrl(existingImageUrl);
+        } else {
+          // Fetch the profile image from Supabase storage
+          const { data: { publicUrl } } = supabase.storage
+            .from('user-page-image-test')
+            .getPublicUrl(data.image);
+          setUploadedImageUrl(publicUrl);
+        }
       }
     };
 
     fetchUserData();
   }, [id, navigate]);
 
-  console.log("User data:", userData);
-
   return (
     <div className="d-flex">
-      <Sidebar userData={userData} />
+      <Sidebar userData={userData} uploadedImageUrl={uploadedImageUrl} />
       <div className="p-4 flex-grow-1 bg-white" style={{ padding: '2rem' }}>
         {userData && (
           <>
             <h2 className="fw-bold mb-4">Dashboard</h2>
             <div className="d-flex align-items-start mb-4">
               <img
-                // src={userData.image}
-                src="https://www.gravatar.com/avatar/"
+                src={uploadedImageUrl || "https://via.placeholder.com/120"}
                 alt="Profile"
                 className="rounded-circle me-4"
                 width="120"

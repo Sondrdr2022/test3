@@ -1,37 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react"; // Hamburger and close icons
 
-export default function Sidebar({ userData }) {
+const STORAGE_BUCKET_NAME = 'user-page-image-test'; // Replace with your actual storage bucket name
+
+export default function Sidebar({ userData, uploadedImageUrl }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
+  const fetchProfileImage = async () => {
+    if (userData?.image) {
+      const { data: { publicUrl }, error } = supabase.storage
+        .from(STORAGE_BUCKET_NAME)
+        .getPublicUrl(userData.image);
+
+      if (publicUrl) {
+        return publicUrl;
+      } else {
+        console.error('Error fetching public URL:', error);
+        return "https://via.placeholder.com/60";
+      }
+    }
+    return "https://via.placeholder.com/60";
   };
 
-  const goToDashboard = () => {
+  async function goToDashboard() {
     if (userData?.id) {
       navigate(`/freelancer-dashboard/${userData.id}`);
     }
-  };
+  }
 
-  const goToEditPage = () => {
+  async function goToEditPage() {
     if (userData?.id) {
       navigate(`/freelancer-dashboard/${userData.id}/details`);
     }
-  };
+  }
 
-  const goToPortfolio = () => {
+  async function goToPortfolio() {
     if (userData?.id) {
       navigate(`/freelancer-dashboard/${userData.id}/portfolio`);
     }
-  };
-  
-  
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate("/");
+  }
 
   return (
     <>
@@ -44,7 +60,6 @@ export default function Sidebar({ userData }) {
         <Menu size={24} />
       </button>
 
-
       {/* Sidebar for larger screens */}
       <div
         className="bg-dark text-white p-3 d-none d-md-flex flex-column align-items-start"
@@ -52,6 +67,8 @@ export default function Sidebar({ userData }) {
       >
         <SidebarContent
           userData={userData}
+          fetchProfileImage={fetchProfileImage}
+          uploadedImageUrl={uploadedImageUrl}
           goToDashboard={goToDashboard}
           goToEditPage={goToEditPage}
           goToPortfolio={goToPortfolio}
@@ -77,6 +94,8 @@ export default function Sidebar({ userData }) {
           </button>
           <SidebarContent
             userData={userData}
+            fetchProfileImage={fetchProfileImage}
+            uploadedImageUrl={uploadedImageUrl}
             goToDashboard={() => {
               goToDashboard();
               setIsOpen(false);
@@ -97,12 +116,23 @@ export default function Sidebar({ userData }) {
   );
 }
 
-function SidebarContent({ userData, goToDashboard, goToEditPage, goToPortfolio, handleLogout }) {
+function SidebarContent({ userData, fetchProfileImage, uploadedImageUrl, goToDashboard, goToEditPage, goToPortfolio, handleLogout }) {
+  const [profileImage, setProfileImage] = useState("https://via.placeholder.com/60");
+
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      const imageUrl = uploadedImageUrl || await fetchProfileImage();
+      setProfileImage(imageUrl);
+    };
+
+    loadProfileImage();
+  }, [fetchProfileImage, uploadedImageUrl]);
+
   return (
     <>
       <div className="d-flex align-items-center mb-4 w-100">
         <img
-          src={userData?.image || "https://via.placeholder.com/60"}
+          src={profileImage}
           alt="Profile"
           className="rounded-circle me-3"
           width="60"
@@ -133,12 +163,12 @@ function SidebarContent({ userData, goToDashboard, goToEditPage, goToPortfolio, 
           </button>
         </li>
         <li className="my-3">
-        <button
-          onClick={goToPortfolio}
-          className="btn btn-link text-white p-0 text-decoration-none"
-        >
-          Portfolio
-        </button>
+          <button
+            onClick={goToPortfolio}
+            className="btn btn-link text-white p-0 text-decoration-none"
+          >
+            Portfolio
+          </button>
         </li>
         <li className="my-3">
           <a href="#" className="text-white text-decoration-none">

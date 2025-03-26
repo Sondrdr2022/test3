@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import FreelancerDashboard from "./pages/FreelancerDashboard";
 import UserDetails from "./pages/UserDetails";
 import PortfolioPage from "./pages/PortfolioPage";
+import UploadImage from "./components/UploadImage";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/signup-freelancer" element={<SignupFreelancer />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/" element={< Home />} />
+        <Route path="/upload" element={<UploadImage />} /> 
       </Routes>
     </Router>
   );
