@@ -8,7 +8,7 @@ import FreelancerDashboard from "./pages/FreelancerDashboard";
 import UserDetails from "./pages/UserDetails";
 import PortfolioPage from "./pages/PortfolioPage";
 import UploadImage from "./components/UploadImage";
-
+import SearchPage from "./pages/SearchPage";
 export default function App() {
   return (
     <Router>
@@ -22,6 +22,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/" element={< Home />} />
         <Route path="/upload" element={<UploadImage />} /> 
+        <Route path="/freelancer-dashboard/:id/search" element={<SearchPage />} />
       </Routes>
     </Router>
   );

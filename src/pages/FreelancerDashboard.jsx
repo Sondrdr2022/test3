@@ -39,6 +39,21 @@ export default function FreelancerDashboard() {
             .getPublicUrl(data.image);
           setUploadedImageUrl(publicUrl);
         }
+
+        // Fetch dark mode preference from Supabase
+        const fetchDarkMode = async () => {
+          const { data, error } = await supabase
+            .from('modes')
+            .select('dark_mode')
+            .eq('user_id', id)
+            .single();
+          if (data) {
+            document.body.classList.toggle('dark-mode', data.dark_mode);
+          } else {
+            console.error("Fetch dark mode error:", error);
+          }
+        };
+        fetchDarkMode();
       }
     };
 
@@ -48,7 +63,7 @@ export default function FreelancerDashboard() {
   return (
     <div className="d-flex">
       <Sidebar userData={userData} uploadedImageUrl={uploadedImageUrl} />
-      <div className="p-4 flex-grow-1 bg-white" style={{ padding: '2rem' }}>
+      <div className="p-4 flex-grow-1" style={{ padding: '2rem' }}>
         {userData && (
           <>
             <h2 className="fw-bold mb-4">Dashboard</h2>

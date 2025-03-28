@@ -1,15 +1,44 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f8f9fa; /* Bootstrap Light Background */
+  background-color: #f8f9fa; /* Light Background */
+  color: #000000; /* Light Text */
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-/*Home page*/
+body.dark-mode {
+  background-color: #121212; /* Dark Background */
+  color: #ffffff; /* Dark Text */
+}
 
 .narrow-btn {
   width: 120px; /* Adjust width as needed */
   padding: 5px 10px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
+body.dark-mode .narrow-btn {
+  background-color: #282c34; /* Dark button background */
+  color: #ffffff; /* Light button text */
+}
 
+/* Additional styles for other elements in dark mode */
+header, footer, .main-content, .sidebar {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode header,
+body.dark-mode footer,
+body.dark-mode .main-content,
+body.dark-mode .sidebar {
+  background-color: #1e1e1e; /* Dark background for other sections */
+  color: #ffffff; /* Light text for other sections */
+}
+
+/* Add more styles as needed */
+
+/* Ensure role text is white in dark mode */
+body.dark-mode .text-muted {
+  color: #ffffff !important;
+}

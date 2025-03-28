@@ -1,14 +1,35 @@
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Form, InputGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../dark-mode.css";
 
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <div>
       {/* Navbar */}
       <nav className="navbar navbar-light bg-white p-3 shadow-sm">
         <div className="container">
           <a className="navbar-brand fw-bold">jobstealers</a>
-          <div>
+          <div className="d-flex">
+            <InputGroup className="me-2">
+              <Form.Control
+                type="text"
+                placeholder="Search jobs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button variant="outline-primary" onClick={handleSearch}>Search</Button>
+            </InputGroup>
             <Link to="/login" className="btn btn-outline-dark me-2">Log In</Link>
             <Link to="/login" className="btn btn-dark">Sign Up</Link>
           </div>
@@ -56,36 +77,36 @@ export default function Home() {
 
       {/* Freelancer Profiles Section */}
       <section className="container mt-3">
-            <div className="row">
-            {freelancers.map((freelancer, index) => (
-                <div key={index} className="col-md-3">
-                    <div className="card p-3 shadow-sm text-center">
-                    {/* Freelancer Image */}
-                    <div className="d-flex justify-content-center">
-                        <img
-                        src={freelancer.image}
-                        className="rounded-circle"
-                        alt="Freelancer"
-                        style={{
-                            width: "100px",  // Set fixed width
-                            height: "100px", // Set fixed height
-                            objectFit: "cover", // Ensure image covers the circular area
-                            border: "3px solid #ddd" // Optional: Adds a border for better visibility
-                        }}
-                        />
-                    </div>
-
-                    {/* Freelancer Info */}
-                    <h5 className="mt-3">{freelancer.name}</h5>
-                    <p className="text-muted">{freelancer.title}</p>
-                    <span className="badge bg-success">{freelancer.rating} ⭐ ({freelancer.jobs} jobs)</span>
-                    <p className="fw-bold mt-2">{freelancer.price}/hr</p>
-                    <Link to="/login" className="btn btn-success">See more</Link>
-                    </div>
+        <div className="row">
+          {freelancers.map((freelancer, index) => (
+            <div key={index} className="col-md-3">
+              <div className="card p-3 shadow-sm text-center">
+                {/* Freelancer Image */}
+                <div className="d-flex justify-content-center">
+                  <img
+                    src={freelancer.image}
+                    className="rounded-circle"
+                    alt="Freelancer"
+                    style={{
+                      width: "100px",  // Set fixed width
+                      height: "100px", // Set fixed height
+                      objectFit: "cover", // Ensure image covers the circular area
+                      border: "3px solid #ddd" // Optional: Adds a border for better visibility
+                    }}
+                  />
                 </div>
-                ))}
+
+                {/* Freelancer Info */}
+                <h5 className="mt-3">{freelancer.name}</h5>
+                <p className="text-muted">{freelancer.title}</p>
+                <span className="badge bg-success">{freelancer.rating} ⭐ ({freelancer.jobs} jobs)</span>
+                <p className="fw-bold mt-2">{freelancer.price}/hr</p>
+                <Link to="/login" className="btn btn-success">See more</Link>
+              </div>
             </div>
-        </section>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

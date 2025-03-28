@@ -4,6 +4,7 @@ import { supabase } from '../supabaseClient';
 import Sidebar from '../components/Sidebar';
 import { Eye, EyeOff } from 'lucide-react'; // For password viewer icon
 import { uploadImage } from '../components/uploadimagefunction'; // Import the uploadImage function
+import DarkModeToggle from '../components/DarkModeToggle'; // Import the DarkModeToggle component
 
 export default function UserDetails() {
   const [userData, setUserData] = useState({
@@ -24,6 +25,7 @@ export default function UserDetails() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [darkMode, setDarkMode] = useState(false); // State to track dark mode
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -46,6 +48,21 @@ export default function UserDetails() {
     if (existingImageUrl) {
       setUploadedImageUrl(existingImageUrl);
     }
+
+    // Fetch dark mode preference from Supabase
+    const fetchDarkMode = async () => {
+      const { data, error } = await supabase
+        .from('modes')
+        .select('dark_mode')
+        .eq('user_id', id)
+        .single();
+      if (data) {
+        setDarkMode(data.dark_mode);
+      } else {
+        console.error("Fetch dark mode error:", error);
+      }
+    };
+    fetchDarkMode();
   }, [id]);
 
   const handleChange = (e) => {
@@ -57,6 +74,11 @@ export default function UserDetails() {
     e.preventDefault();
     
     const updates = {
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      email: userData.email,
+      role: userData.role,
+      country: userData.country,
       description: userData.description,
     };
   
@@ -68,10 +90,10 @@ export default function UserDetails() {
   
     if (error) {
       console.error("Update failed:", error);
-      alert('Failed to save description');
+      alert('Failed to save changes');
     } else {
-      console.log("Description updated:", data);
-      alert('Description updated successfully!');
+      console.log("User details updated:", data);
+      alert('User details updated successfully!');
     }
   };
 
@@ -101,28 +123,28 @@ export default function UserDetails() {
         <div>Loading sidebar...</div>
       )}
 
-      <div className="p-4 w-100 bg-light">
+      <div className="p-4 w-100">
         <h3 className="mb-4">User Details</h3>
         <form onSubmit={handleSubmit}>
           <div className="row mb-3">
             <div className="col">
               <label>Firstname</label>
-              <input type="text" className="form-control" name="first_name" value={userData.first_name} onChange={handleChange} disabled />
+              <input type="text" className="form-control" name="first_name" value={userData.first_name} onChange={handleChange} />
             </div>
             <div className="col">
               <label>Lastname</label>
-              <input type="text" className="form-control" name="last_name" value={userData.last_name} onChange={handleChange} disabled />
+              <input type="text" className="form-control" name="last_name" value={userData.last_name} onChange={handleChange} />
             </div>
             <div className="col">
               <label>Role</label>
-              <input type="text" className="form-control" name="role" value={userData.role} disabled />
+              <input type="text" className="form-control" name="role" value={userData.role} onChange={handleChange} />
             </div>
           </div>
 
           <div className="row mb-3">
             <div className="col">
               <label>Email</label>
-              <input type="email" className="form-control" name="email" value={userData.email} onChange={handleChange} disabled />
+              <input type="email" className="form-control" name="email" value={userData.email} onChange={handleChange} />
             </div>
             <div className="col position-relative">
             <label>Password</label>
@@ -133,7 +155,6 @@ export default function UserDetails() {
                 name="password"
                 value={userData.password}
                 onChange={handleChange}
-                disabled
                 />
                 <span
                 style={{
@@ -152,7 +173,7 @@ export default function UserDetails() {
             </div>
             <div className="col">
               <label>Country</label>
-              <input type="text" className="form-control" name="country" value={userData.country} onChange={handleChange} disabled />
+              <input type="text" className="form-control" name="country" value={userData.country} onChange={handleChange} />
             </div>
           </div>
 
@@ -199,6 +220,11 @@ export default function UserDetails() {
               />
             </div>
           )}
+        </div>
+
+        <div className="theme-toggle">
+          <label>Dark Mode</label>
+          <DarkModeToggle userId={id} />
         </div>
       </div>
 
@@ -288,6 +314,11 @@ export default function UserDetails() {
           max-height: 100px;
           border-radius: 50%;
           object-fit: cover;
+        }
+
+        .theme-toggle {
+          margin-top: 20px;
+          text-align: center;
         }
       `}</style>
     </div>
