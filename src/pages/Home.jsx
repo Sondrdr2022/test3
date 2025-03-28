@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Form, InputGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../dark-mode.css";
-
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();

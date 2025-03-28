@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import Sidebar from "../components/Sidebar";
 import SearchForm from "../components/SearchForm";
-import DarkModeToggle from '../components/DarkModeToggle';
 import { useParams } from 'react-router-dom';
 
 export default function SearchPage() {
@@ -51,15 +50,9 @@ export default function SearchPage() {
   return (
     <div className="d-flex">
       <Sidebar userData={userData} uploadedImageUrl={uploadedImageUrl}/>
-      <div className="theme-toggle mt-5" style={{marginLeft: 'auto', marginRight: '20px'}}>
-        <label>Modes :</label>
-        <DarkModeToggle userId={id} />
-      </div>
-        
       <div className="container mt-4">
         <SearchForm />
       </div>
-      
     </div>
   );
 }

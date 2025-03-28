@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import { supabase } from "../supabaseClient";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react"; // Hamburger and close icons
@@ -9,6 +10,7 @@ const STORAGE_BUCKET_NAME = 'user-page-image-test'; // Replace with your actual 
 export default function Sidebar({ userData, uploadedImageUrl }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { id } = useParams();
 
   const fetchProfileImage = async () => {
     if (userData?.image) {
@@ -49,6 +51,13 @@ export default function Sidebar({ userData, uploadedImageUrl }) {
     navigate("/");
   }
 
+  async function goToSearchPage() {
+    if (userData?.id) {
+      navigate(`/freelancer-dashboard/${userData.id}/search`);
+    }
+  };
+
+
   return (
     <>
       {/* Hamburger button for mobile */}
@@ -72,6 +81,7 @@ export default function Sidebar({ userData, uploadedImageUrl }) {
           goToDashboard={goToDashboard}
           goToEditPage={goToEditPage}
           goToPortfolio={goToPortfolio}
+          goToSearchPage={goToSearchPage}
           handleLogout={handleLogout}
         />
       </div>
@@ -108,6 +118,10 @@ export default function Sidebar({ userData, uploadedImageUrl }) {
               goToPortfolio();
               setIsOpen(false); // For mobile sidebar close on click
             }}
+            goToSearchPage={() => {
+              goToPortfolio();
+              setIsOpen(false);
+            }}
             handleLogout={handleLogout}
           />
         </motion.div>
@@ -116,7 +130,7 @@ export default function Sidebar({ userData, uploadedImageUrl }) {
   );
 }
 
-function SidebarContent({ userData, fetchProfileImage, uploadedImageUrl, goToDashboard, goToEditPage, goToPortfolio, handleLogout }) {
+function SidebarContent({ userData, fetchProfileImage, uploadedImageUrl, goToDashboard, goToEditPage, goToPortfolio, goToSearchPage, handleLogout }) {
   const [profileImage, setProfileImage] = useState("https://via.placeholder.com/60");
 
   useEffect(() => {
@@ -145,6 +159,7 @@ function SidebarContent({ userData, fetchProfileImage, uploadedImageUrl, goToDas
           <small className="text-muted">{userData?.job}</small>
         </div>
       </div>
+
       <ul className="list-unstyled w-100">
         <li className="my-3">
           <button
@@ -171,11 +186,20 @@ function SidebarContent({ userData, fetchProfileImage, uploadedImageUrl, goToDas
           </button>
         </li>
         <li className="my-3">
+          <button
+            onClick={goToSearchPage}
+            className="btn btn-link text-white p-0 text-decoration-none"
+          >
+            Search
+          </button>
+        </li>
+        <li className="my-3">
           <a href="#" className="text-white text-decoration-none">
             Activity
           </a>
         </li>
       </ul>
+      
       <button
         className="btn btn-outline-light mt-auto w-100"
         onClick={handleLogout}
