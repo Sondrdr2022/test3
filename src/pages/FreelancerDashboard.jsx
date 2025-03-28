@@ -48,6 +48,7 @@ export default function FreelancerDashboard() {
             .eq('user_id', id)
             .single();
           if (data) {
+            localStorage.setItem('darkMode', data.dark_mode);
             document.body.classList.toggle('dark-mode', data.dark_mode);
           } else {
             console.error("Fetch dark mode error:", error);
@@ -59,6 +60,11 @@ export default function FreelancerDashboard() {
 
     fetchUserData();
   }, [id, navigate]);
+
+  useEffect(() => {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    document.body.classList.toggle('dark-mode', darkMode);
+  }, []);
 
   return (
     <div className="d-flex">
