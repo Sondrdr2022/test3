@@ -55,8 +55,7 @@ export default function Sidebar({ userData, uploadedImageUrl }) {
     if (userData?.id) {
       navigate(`/freelancer-dashboard/${userData.id}/search`);
     }
-  };
-
+  }
 
   return (
     <>
@@ -119,7 +118,7 @@ export default function Sidebar({ userData, uploadedImageUrl }) {
               setIsOpen(false); // For mobile sidebar close on click
             }}
             goToSearchPage={() => {
-              goToPortfolio();
+              goToSearchPage();
               setIsOpen(false);
             }}
             handleLogout={handleLogout}
