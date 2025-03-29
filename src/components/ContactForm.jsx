@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { supabase } from "../supabaseClient";
 
 const ContactForm = ({ show, onHide, freelancer }) => {
   const [formData, setFormData] = useState({
@@ -13,11 +14,29 @@ const ContactForm = ({ show, onHide, freelancer }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log(`Message to ${freelancer.name}:`, formData);
-    onHide();
+    try {
+      const { error } = await supabase.auth.api.sendMagicLinkEmail({
+        email: formData.email,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: {
+            subject: `New message from ${formData.email}`,
+            body: `Task Name: ${formData.taskName}\nJob Description: ${formData.jobDescription}`,
+          },
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log(`Message to ${freelancer.name}:`, formData);
+      onHide();
+    } catch (error) {
+      console.error("Error sending email:", error.message);
+    }
   };
 
   return (
